@@ -1,6 +1,7 @@
 package com.example.prog7313
 
 import android.app.DatePickerDialog
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -25,16 +26,13 @@ class CategorySpendingChartActivity : AppCompatActivity() {
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-    // Store selected dates
     private var startDate: Date = Calendar.getInstance().apply {
         set(Calendar.DAY_OF_MONTH, 1)
     }.time
     private var endDate: Date = Date()
 
-    // Store spending per category
     private val categorySpendMap = mutableMapOf<String, Double>()
 
-    // Store min and max goals (global for demo)
     private var minGoal = 0.0
     private var maxGoal = 0.0
 
@@ -99,7 +97,6 @@ class CategorySpendingChartActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 minGoal = snapshot.child("minGoal").getValue(Double::class.java) ?: 0.0
                 maxGoal = snapshot.child("maxGoal").getValue(Double::class.java) ?: 0.0
-
                 loadDataAndDisplayChart()
             }
 
@@ -149,12 +146,24 @@ class CategorySpendingChartActivity : AppCompatActivity() {
             return
         }
 
-        val entries = categorySpendMap.entries.mapIndexed { index, entry ->
-            BarEntry(index.toFloat(), entry.value.toFloat())
+        val entries = mutableListOf<BarEntry>()
+        val barColors = mutableListOf<Int>()
+        val categories = categorySpendMap.keys.toList()
+
+        categorySpendMap.entries.forEachIndexed { index, entry ->
+            val value = entry.value
+            val color = when {
+                value < minGoal -> Color.YELLOW
+                value > maxGoal -> Color.RED
+                else -> Color.GREEN
+            }
+
+            entries.add(BarEntry(index.toFloat(), value.toFloat()))
+            barColors.add(color)
         }
 
         val dataSet = BarDataSet(entries, "Spending per Category").apply {
-            color = resources.getColor(android.R.color.holo_blue_light, theme)
+            colors = barColors
             valueTextSize = 12f
         }
 
@@ -164,8 +173,6 @@ class CategorySpendingChartActivity : AppCompatActivity() {
 
         barChart.data = barData
 
-        // X Axis labels
-        val categories = categorySpendMap.keys.toList()
         barChart.xAxis.apply {
             position = XAxis.XAxisPosition.BOTTOM
             valueFormatter = IndexAxisValueFormatter(categories)
@@ -175,21 +182,17 @@ class CategorySpendingChartActivity : AppCompatActivity() {
             setAvoidFirstLastClipping(true)
         }
 
-        // Add extra bottom offset so labels have room
         barChart.setExtraBottomOffset(20f)
-
-        // Remove right axis
         barChart.axisRight.isEnabled = false
 
-        // Setup Y Axis with limit lines for min and max goals
         val leftAxis = barChart.axisLeft
         leftAxis.removeAllLimitLines()
-
+//colour changes
         if (minGoal > 0) {
             val minLine = LimitLine(minGoal.toFloat(), "Min Goal")
             minLine.lineWidth = 2f
-            minLine.lineColor = resources.getColor(android.R.color.holo_green_dark, theme)
-            minLine.textColor = resources.getColor(android.R.color.holo_green_dark, theme)
+            minLine.lineColor = Color.GREEN
+            minLine.textColor = Color.GREEN
             minLine.textSize = 12f
             leftAxis.addLimitLine(minLine)
         }
@@ -197,16 +200,16 @@ class CategorySpendingChartActivity : AppCompatActivity() {
         if (maxGoal > 0) {
             val maxLine = LimitLine(maxGoal.toFloat(), "Max Goal")
             maxLine.lineWidth = 2f
-            maxLine.lineColor = resources.getColor(android.R.color.holo_red_dark, theme)
-            maxLine.textColor = resources.getColor(android.R.color.holo_red_dark, theme)
+            maxLine.lineColor = Color.RED
+            maxLine.textColor = Color.RED
             maxLine.textSize = 12f
             leftAxis.addLimitLine(maxLine)
         }
 
-        leftAxis.axisMinimum = 0f // start y axis at zero
+        leftAxis.axisMinimum = 0f
 
         barChart.description.isEnabled = false
-        barChart.legend.isEnabled = true
+        barChart.legend.isEnabled = false // You can enable and customize if needed
 
         barChart.animateY(1000)
         barChart.invalidate()

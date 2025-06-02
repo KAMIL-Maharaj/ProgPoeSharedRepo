@@ -46,6 +46,7 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.nav_expense_list -> startActivity(Intent(this, ExpenseListActivity::class.java))
             R.id.nav_category_totals -> startActivity(Intent(this, CategoryTotalsActivity::class.java))
             R.id.nav_monthly_summary -> startActivity(Intent(this, MonthlySummaryActivity::class.java))
+            R.id.nav_category_graph -> startActivity(Intent(this, CategorySpendingChartActivity::class.java))
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

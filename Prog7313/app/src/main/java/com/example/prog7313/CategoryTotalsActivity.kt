@@ -88,7 +88,7 @@ class CategoryTotalsActivity : AppCompatActivity() {
                     resultText.append("No expenses found for this period.")
                 } else {
                     totals.forEach { (category, total) ->
-                        resultText.append("$category: $${"%.2f".format(total)}\n")
+                        resultText.append("$category: R${"%.2f".format(total)}\n")
                     }
                 }
                 totalsTextView.text = resultText.toString()

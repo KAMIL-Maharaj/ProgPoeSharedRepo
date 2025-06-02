@@ -20,5 +20,9 @@
     <item
         android:id="@+id/nav_monthly_summary"
         android:title="View Monthly Summary" />
+    <item
+        android:id="@+id/nav_category_graph"
+        android:title="View Category Graph" />
+
 
 </menu>

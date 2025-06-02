@@ -131,7 +131,7 @@ class ExpenseListActivity : AppCompatActivity() {
             holder.dateTextView.text = expense.date
             holder.descriptionTextView.text = expense.description
             holder.categoryTextView.text = expense.category
-            holder.amountTextView.text = String.format(Locale.getDefault(), "$%.2f", expense.amount)
+            holder.amountTextView.text = String.format(Locale.getDefault(), "R%.2f", expense.amount)
 
             Glide.with(this@ExpenseListActivity)
                 .load(if (!expense.photoUrl.isNullOrEmpty()) expense.photoUrl else R.drawable.ic_photo_placeholder)

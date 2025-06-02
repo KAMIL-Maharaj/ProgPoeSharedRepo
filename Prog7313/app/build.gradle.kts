@@ -47,6 +47,10 @@ dependencies {
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
 
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    implementation ("androidx.cardview:cardview:1.0.0")
+
 
     implementation  ("com.google.android.material:material:1.8.0") // Or latest stable version
     implementation  ("androidx.appcompat:appcompat:1.6.1")
